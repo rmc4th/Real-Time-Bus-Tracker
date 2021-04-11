@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Add a default marker</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+<script src="busLines.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<div id="map"></div>
+<div class="map-overlay top">
+    <button style="font-size: 2em;" onclick="bus1()">
+        Show Bus #1 (Nubian Sta./Harvard Sq.)
+    </button>
+</div>
+<script>
+
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm1jNHRoIiwiYSI6ImNrbmI0NTkydjFvMHcyd2xnaXA1c3BwcWIifQ.DPwihFlAE7ufnpfA-ZPX0w';
+
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-71.091382,42.354728],
+    zoom: 12.5
+});
+
+// Initiate markers() array
+var markers = [];
+
+// Get data from MBTA and locate on map
+async function run(){
+    // get bus data
+	const locations = await getBusLocations();
+
+    // remove old markers from map
+    for(let j = 0; j < markers.length; j++){
+        markers[j].remove();
+    }
+
+    // empty markers() array
+    for(let k = (markers.length - 1); k >= 0; k--){
+        markers.pop();
+    }
+
+    // load colored markers, set location, add to map
+    for(let i = 0; i < locations.length; i++){
+    	if (locations[i].attributes.direction_id == 1) {
+    	  markers.push( new mapboxgl.Marker({color: "#00A86B"}))
+    	} else {
+    	  markers.push( new mapboxgl.Marker({color: "#FF2400"}))
+    	}
+
+		// set coordinate
+        markers[i].setLngLat([locations[i].attributes.longitude, locations[i].attributes.latitude]);
+
+        // set pop_up
+        bus_number = locations[i].attributes.label;
+        occupancy = locations[i].attributes.occupancy_status;
+        popup_string = "<h3>" + bus_number + "</h3>" + "<h4>" + occupancy + "</h4>";
+        console.log("popup: ", popup_string);
+        markers[i].setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popup_string));
+
+        // add to map
+        markers[i].addTo(map);
+    }
+
+	// timer
+	setTimeout(run, 15000);
+}
+
+// Request bus data from MBTA
+async function getBusLocations(){
+	const url = 'https://api-v3.mbta.com/vehicles?filter[route]=1&include=trip';
+	const response = await fetch(url);
+	const json     = await response.json();
+	return json.data;
+}
+
+// Draw bus paths on map and make initial run() call
+function bus1(){
+	nubianToHarvard();
+	harvardToNubian();
+	run();
+}
+
+
+</script>
+</body>
+</html>
