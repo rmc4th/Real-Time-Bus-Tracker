@@ -44,8 +44,8 @@ The bus1() function then calls the run() function which
 2. Discards (pops()) existing markers.
 3. Creates new markers based on (new) data.
 
-##Result
-The following files aree contained in this repository.
+## Result
+The following files are contained in this repository.
 1. Index.html - Main document: Draws map, Fetches data, Controls markers
 2. styles.css - Stylesheet for map and popups
 3. busLines.js - Defines lines for bus routes
@@ -94,7 +94,7 @@ Copyright (c) 2020, Mapbox
 
 All rights reserved.
 
-Mapbox gl-js version 2.0 or higher (ìMapbox Web SDKî) must be used according to
+Mapbox gl-js version 2.0 or higher (‚ÄúMapbox Web SDK‚Äù) must be used according to
 the Mapbox Terms of Service. This license allows developers with a current active
 Mapbox account to use and modify the Mapbox Web SDK. Developers may modify the
 Mapbox Web SDK code so long as the modifications do not change or interfere with
